@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atlas — Mapping your work | Planning voor ondernemers en teams</title>
+<meta name="description" content="Atlas is het planning dashboard voor ondernemers en teams. Beheer opdrachten, klantendossiers en deadlines op één overzichtelijke plek. Gratis te beginnen.">
+<meta property="og:title" content="Atlas — Mapping your work">
+<meta property="og:description" content="Het planning dashboard voor ondernemers en teams. Minder chaos, meer overzicht.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0c6e82">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 44'%3E%3Crect width='44' height='44' rx='10' fill='%230c6e82'/%3E%3Ccircle cx='22' cy='22' r='13' stroke='white' stroke-opacity='0.5' stroke-width='1.8' fill='none'/%3E%3Cellipse cx='22' cy='22' rx='6.5' ry='13' stroke='white' stroke-opacity='0.45' stroke-width='1.8' fill='none'/%3E%3Cline x1='9' y1='22' x2='35' y2='22' stroke='white' stroke-opacity='0.4' stroke-width='1.8'/%3E%3Ccircle cx='22' cy='22' r='3' fill='white'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+:root{
+  --teal:#0c6e82;
+  --teal2:#0891b2;
+  --teal3:#0e7490;
+  --teal-dim:rgba(12,110,130,0.09);
+  --teal-border:rgba(12,110,130,0.22);
+  --bg:#f8f6f2;
+  --bg2:#f2f0eb;
+  --surface:#ffffff;
+  --line:rgba(0,0,0,0.06);
+  --line2:rgba(0,0,0,0.11);
+  --text:#131210;
+  --text2:#696660;
+  --text3:#aeaba4;
+  --font:'Inter',sans-serif;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--font);-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+
+/* ── NAV ── */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  padding:0 max(28px,5vw);height:62px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(248,246,242,0.88);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--line);
+  transition:box-shadow .3s;
+}
+.nav-links{
+  display:flex;gap:6px;
+  position:absolute;left:50%;transform:translateX(-50%);
+}
+.nav.scrolled{box-shadow:0 1px 24px rgba(0,0,0,.07);}
+.nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-logomark{
+  width:34px;height:34px;border-radius:10px;
+  background:linear-gradient(145deg,#0c6e82 0%,#0891b2 100%);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 2px 8px rgba(12,110,130,.3);
+  flex-shrink:0;
+}
+.nav-name{font-size:15px;font-weight:700;letter-spacing:-.03em;color:var(--text);}
+
+.nav-link{padding:7px 14px;font-size:13px;font-weight:500;color:var(--text2);text-decoration:none;border-radius:8px;transition:all .15s;}
+.nav-link:hover{background:var(--bg2);color:var(--text);}
+.nav-actions{display:flex;align-items:center;gap:8px;}
+.btn-login{padding:0 18px;height:36px;font-size:13px;font-weight:500;color:var(--text2);background:transparent;border:1px solid var(--line2);border-radius:20px;cursor:pointer;font-family:var(--font);text-decoration:none;display:inline-flex;align-items:center;transition:all .15s;}
+.btn-login:hover{color:var(--text);border-color:var(--text3);}
+.btn-start{padding:0 20px;height:36px;font-size:12.5px;font-weight:600;letter-spacing:.02em;background:var(--text);color:var(--bg);border:none;border-radius:20px;cursor:pointer;font-family:var(--font);text-decoration:none;display:inline-flex;align-items:center;justify-content:center;transition:all .2s;line-height:1;}
+.btn-start:hover{background:#2a2620;transform:translateY(-1px);}
+
+/* ── HERO ── */
+.hero{
+  min-height:100vh;
+  padding:140px max(28px,5vw) 80px;
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+  text-align:center;position:relative;overflow:hidden;
+}
+.hero-ambient{position:absolute;top:-100px;left:50%;transform:translateX(-50%);width:900px;height:600px;background:radial-gradient(ellipse at 50% 30%,rgba(12,110,130,.1) 0%,transparent 60%);pointer-events:none;}
+.hero-grid{position:absolute;inset:0;background-image:radial-gradient(rgba(0,0,0,.05) 1px,transparent 1px);background-size:32px 32px;pointer-events:none;mask-image:radial-gradient(ellipse 65% 55% at 50% 35%,black 0%,transparent 100%);}
+
+/* BIG LOGO */
+.hero-logo-wrap{
+  position:relative;
+  margin-bottom:44px;
+  display:flex;flex-direction:column;align-items:center;
+}
+.hero-logomark{
+  width:120px;height:120px;border-radius:32px;
+  background:linear-gradient(145deg,#0c6e82 0%,#0891b2 100%);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:
+    0 20px 50px rgba(12,110,130,.4),
+    0 8px 20px rgba(12,110,130,.25),
+    0 2px 4px rgba(12,110,130,.2),
+    inset 0 2px 2px rgba(255,255,255,.2),
+    inset 0 -2px 4px rgba(0,0,0,.15);
+  position:relative;
+  transform-style:preserve-3d;
+  transition:transform .3s ease,box-shadow .3s ease;
+  animation:logoFloat 5s ease-in-out infinite;
+  cursor:default;
+}
+@keyframes logoFloat{
+  0%,100%{transform:translateY(0) rotateX(0) rotateY(0);}
+  50%{transform:translateY(-10px) rotateX(3deg) rotateY(-2deg);}
+}
+.hero-logomark:hover{
+  transform:translateY(-6px) rotateX(8deg) rotateY(-6deg) scale(1.04);
+  box-shadow:
+    0 30px 70px rgba(12,110,130,.45),
+    0 12px 28px rgba(12,110,130,.3),
+    inset 0 2px 2px rgba(255,255,255,.25);
+}
+@media(prefers-reduced-motion:reduce){.hero-logomark{animation:none;}}
+.hero-logomark::after{
+  content:'';position:absolute;inset:-1px;
+  border-radius:33px;
+  background:linear-gradient(145deg,rgba(255,255,255,.15),transparent 50%);
+  pointer-events:none;
+}
+.hero-slogan{
+  margin-top:18px;
+  font-size:12px;font-weight:700;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--teal);
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.hero-slogan::before,.hero-slogan::after{content:'';display:block;width:32px;height:1px;background:var(--teal);opacity:.4;}
+
+.hero-title{
+  font-size:clamp(42px,7.5vw,88px);
+  font-weight:800;letter-spacing:-.05em;line-height:1.01;
+  max-width:900px;margin-bottom:24px;
+  position:relative;width:100%;
+}
+.hero-title-line1{display:block;color:var(--text);}
+.hero-title-line2{
+  display:block;
+  color:var(--teal);
+}
+.hero-title-line3{display:block;font-weight:300;font-style:italic;color:var(--text3);font-size:.85em;}
+
+.hero-sub{
+  font-size:clamp(15px,1.8vw,18px);
+  color:var(--text2);line-height:1.7;
+  max-width:460px;margin:0 auto 40px;font-weight:400;
+}
+.hero-cta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;}
+.btn-hero-main{
+  padding:0 30px;height:52px;font-size:14px;font-weight:600;
+  background:var(--teal);color:#fff;border:none;
+  border-radius:28px;cursor:pointer;font-family:var(--font);
+  display:inline-flex;align-items:center;gap:9px;text-decoration:none;
+  transition:all .2s;
+  box-shadow:0 4px 20px rgba(12,110,130,.35),0 1px 4px rgba(12,110,130,.2);
+}
+.btn-hero-main:hover{background:var(--teal3);transform:translateY(-2px);box-shadow:0 8px 30px rgba(12,110,130,.4);}
+.btn-hero-sec{
+  padding:0 26px;height:52px;font-size:14px;font-weight:500;
+  color:var(--text2);border:1px solid var(--line2);background:var(--surface);
+  border-radius:28px;cursor:pointer;font-family:var(--font);
+  display:inline-flex;align-items:center;gap:8px;text-decoration:none;transition:all .15s;
+}
+.btn-hero-sec:hover{border-color:var(--text3);color:var(--text);}
+.hero-fine{font-size:12px;color:var(--text3);margin-top:16px;position:relative;}
+
+/* DASHBOARD PREVIEW */
+.preview-section{
+  margin-top:64px;
+  width:100%;max-width:1020px;
+  position:relative;
+}
+.preview-glow{
+  position:absolute;top:-60px;left:50%;transform:translateX(-50%);
+  width:700px;height:300px;
+  background:radial-gradient(ellipse,rgba(12,110,130,.12) 0%,transparent 65%);
+  pointer-events:none;
+}
+.preview-browser{
+  background:var(--surface);border:1px solid var(--line2);
+  border-radius:16px;overflow:hidden;
+  box-shadow:0 40px 90px rgba(0,0,0,.13),0 12px 30px rgba(0,0,0,.06);
+  transform:perspective(1400px) rotateX(4deg);
+  transform-origin:center top;
+  transition:transform .5s ease,box-shadow .5s ease;
+}
+.preview-browser:hover{
+  transform:perspective(2000px) rotateX(0deg);
+  box-shadow:0 50px 100px rgba(0,0,0,.16),0 16px 36px rgba(0,0,0,.08);
+}
+.browser-bar{
+  background:var(--bg2);border-bottom:1px solid var(--line);
+  padding:0 16px;height:40px;display:flex;align-items:center;gap:12px;
+}
+.b-dots{display:flex;gap:5px;}
+.b-dot{width:10px;height:10px;border-radius:50%;}
+.b-url{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:3px 12px;font-size:11px;color:var(--text3);font-family:ui-monospace,monospace;max-width:240px;}
+.app-nav{background:var(--surface);border-bottom:1px solid var(--line);padding:0 18px;height:46px;display:flex;align-items:center;gap:4px;}
+.a-brand{display:flex;align-items:center;gap:7px;margin-right:18px;}
+.a-logomark{width:22px;height:22px;border-radius:6px;background:linear-gradient(145deg,#0c6e82,#0891b2);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.a-name{font-size:12px;font-weight:700;letter-spacing:-.02em;}
+.a-tab{padding:4px 11px;border-radius:5px;font-size:11px;font-weight:500;color:var(--text3);display:flex;align-items:center;gap:4px;}
+.a-tab.on{background:rgba(12,110,130,.08);color:var(--teal);border:1px solid rgba(12,110,130,.18);}
+.a-tab-badge{font-size:8.5px;background:rgba(12,110,130,.12);color:var(--teal);padding:1px 5px;border-radius:3px;font-family:ui-monospace,monospace;}
+.a-online{margin-left:auto;display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3);}
+.a-dot{width:5px;height:5px;border-radius:50%;background:#10b981;}
+.app-body{padding:18px 20px;}
+.a-date{font-size:9px;text-transform:uppercase;letter-spacing:.1em;font-weight:700;color:var(--text3);margin-bottom:4px;}
+.a-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.a-page-title{font-size:15px;font-weight:700;letter-spacing:-.02em;}
+.a-btn{padding:0 12px;height:26px;background:var(--teal);color:#fff;border:none;border-radius:14px;font-size:10px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;display:flex;align-items:center;}
+.a-summary{display:flex;align-items:center;gap:8px;font-size:10px;color:var(--text2);margin-bottom:12px;padding-bottom:9px;border-bottom:1px solid var(--line);}
+.a-sdot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+.a-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:12px;}
+.a-stat{background:var(--bg);border:1px solid var(--line2);border-radius:7px;padding:10px 12px;position:relative;overflow:hidden;}
+.a-stat::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--c);}
+.a-stat-l{font-size:7.5px;text-transform:uppercase;letter-spacing:.1em;font-weight:700;color:var(--text3);margin-bottom:5px;}
+.a-stat-v{font-size:17px;font-weight:300;font-family:ui-monospace,monospace;color:var(--text);}
+.a-stat-h{font-size:8px;color:var(--text3);margin-top:2px;}
+.a-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;}
+.a-card{background:var(--bg);border:1px solid var(--line2);border-radius:7px;padding:10px 12px;}
+.a-client{font-size:8px;text-transform:uppercase;letter-spacing:.1em;font-weight:700;color:var(--text3);margin-bottom:2px;}
+.a-ctitle{font-size:11px;font-weight:600;color:var(--text);margin-bottom:6px;letter-spacing:-.01em;line-height:1.3;}
+.a-badges{display:flex;gap:4px;}
+.a-badge{font-size:8px;font-weight:700;padding:2px 6px;border-radius:3px;text-transform:uppercase;letter-spacing:.04em;}
+.a-prog{height:2px;background:var(--line2);border-radius:1px;margin-top:7px;overflow:hidden;}
+.a-pfill{height:100%;border-radius:1px;}
+.a-foot{display:flex;align-items:center;justify-content:space-between;margin-top:6px;}
+.a-av{width:15px;height:15px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:6.5px;font-weight:700;color:#fff;}
+.a-chip{font-size:8.5px;color:var(--text3);}
+
+/* ── DIVIDER STRIP ── */
+.strip{
+  padding:32px max(28px,5vw);
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;gap:40px;
+  flex-wrap:wrap;
+}
+.strip-item{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:500;color:var(--text2);}
+.strip-icon{width:32px;height:32px;border-radius:8px;background:var(--teal-dim);border:1px solid var(--teal-border);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--teal);transition:transform .2s ease;}
+.strip-item{transition:transform .2s ease;cursor:default;}
+.strip-item:hover{transform:translateY(-2px);}
+.strip-item:hover .strip-icon{transform:scale(1.12);}
+.strip-divider{width:1px;height:24px;background:var(--line2);}
+
+/* ── FEATURES ── */
+.features{padding:100px max(28px,5vw);}
+.features-inner{max-width:1020px;margin:0 auto;}
+.section-pre{font-size:11px;text-transform:uppercase;letter-spacing:.16em;font-weight:700;color:var(--teal);margin-bottom:10px;}
+.section-h{font-size:clamp(28px,4vw,48px);font-weight:800;letter-spacing:-.05em;line-height:1.08;margin-bottom:14px;max-width:580px;}
+.section-s{font-size:16px;color:var(--text2);line-height:1.65;max-width:440px;margin-bottom:60px;}
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;border:1px solid var(--line2);border-radius:16px;overflow:hidden;}
+.feat{background:var(--surface);padding:34px 30px;transition:transform .25s ease,background .15s,box-shadow .25s;position:relative;}
+.feat:hover{background:var(--surface);transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,.08);z-index:2;}
+.feat-ic{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:20px;background:var(--teal-dim);color:var(--teal);}
+.feat:nth-child(2) .feat-ic{background:rgba(5,150,105,.08);color:#059669;}
+.feat:nth-child(3) .feat-ic{background:rgba(217,119,6,.08);color:#d97706;}
+.feat:nth-child(4) .feat-ic{background:rgba(8,145,178,.08);color:#0891b2;}
+.feat:nth-child(5) .feat-ic{background:rgba(220,38,38,.08);color:#dc2626;}
+.feat:nth-child(6) .feat-ic{background:rgba(124,58,237,.08);color:#7c3aed;}
+.feat-title{font-size:15px;font-weight:600;letter-spacing:-.01em;margin-bottom:8px;}
+.feat-text{font-size:13px;color:var(--text2);line-height:1.65;}
+
+/* ── DARK HOW ── */
+.how{background:#0d1117;padding:100px max(28px,5vw);}
+.how-inner{max-width:1000px;margin:0 auto;}
+.how-pre{font-size:11px;text-transform:uppercase;letter-spacing:.16em;font-weight:700;color:rgba(8,145,178,.8);margin-bottom:10px;}
+.how-h{font-size:clamp(28px,4vw,48px);font-weight:800;letter-spacing:-.05em;color:#f0f0ef;line-height:1.08;margin-bottom:60px;max-width:520px;}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.07);border-radius:16px;overflow:hidden;}
+.step{padding:36px 28px;background:rgba(255,255,255,.02);transition:transform .25s ease,background .25s;}
+.step-n{font-size:11px;font-weight:700;color:rgba(8,145,178,.6);letter-spacing:.1em;font-family:ui-monospace,monospace;margin-bottom:18px;}
+.step-ic{width:38px;height:38px;border-radius:10px;background:rgba(12,110,130,.2);border:1px solid rgba(12,110,130,.3);display:flex;align-items:center;justify-content:center;font-size:17px;color:#22d3ee;margin-bottom:16px;transition:transform .25s ease;}
+.step:hover{background:rgba(255,255,255,.05);}
+.step:hover .step-ic{transform:scale(1.1) translateY(-2px);}
+.step-title{font-size:15px;font-weight:600;color:#f0f0ef;letter-spacing:-.01em;margin-bottom:8px;}
+.step-text{font-size:13px;color:rgba(255,255,255,.42);line-height:1.65;}
+
+/* ── PRICING ── */
+.pricing{padding:100px max(28px,5vw);background:var(--bg2);}
+.pricing-inner{max-width:460px;margin:0 auto;text-align:center;}
+.pricing-card{
+  background:var(--surface);border:1px solid var(--line2);
+  border-radius:20px;padding:40px 36px;margin-top:44px;text-align:left;
+  position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;
+}
+.pricing-card:hover{transform:translateY(-4px);box-shadow:0 16px 48px rgba(0,0,0,.1);}
+.pricing-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#0c6e82,#22d3ee);}
+.price-amt{font-size:58px;font-weight:800;letter-spacing:-.06em;line-height:1;}
+.price-cur{font-size:20px;font-weight:400;color:var(--text2);vertical-align:super;margin-right:2px;}
+.price-per{font-size:13px;color:var(--text3);margin-bottom:24px;margin-top:4px;}
+.price-list{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:28px;}
+.price-li{display:flex;align-items:center;gap:10px;font-size:13.5px;color:var(--text2);}
+.price-li i{font-size:15px;color:var(--teal);flex-shrink:0;}
+.btn-price{
+  width:100%;height:50px;font-size:13px;font-weight:600;
+  background:var(--teal);color:#fff;border:none;
+  border-radius:26px;cursor:pointer;font-family:var(--font);
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  text-decoration:none;transition:all .2s;
+  box-shadow:0 4px 16px rgba(12,110,130,.3);
+}
+.btn-price:hover{background:var(--teal3);transform:translateY(-1px);}
+.price-note{font-size:11.5px;color:var(--text3);text-align:center;margin-top:12px;}
+
+/* ── CTA ── */
+.cta{padding:0 max(28px,4vw) 100px;}
+.cta-box{
+  max-width:1020px;margin:0 auto;
+  background:#0d1117;
+  border-radius:24px;padding:80px max(40px,6vw);
+  text-align:center;position:relative;overflow:hidden;
+}
+.cta-orb{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(12,110,130,.25) 0%,transparent 65%);pointer-events:none;}
+.cta-grid{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.04) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;}
+
+/* BIG ATLAS LOGO IN CTA */
+.cta-logo{
+  width:72px;height:72px;border-radius:20px;
+  background:linear-gradient(145deg,#0c6e82,#0891b2);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 24px;
+  box-shadow:0 8px 32px rgba(12,110,130,.4),inset 0 1px 0 rgba(255,255,255,.15);
+  position:relative;
+}
+.cta-tagline{
+  font-size:11px;font-weight:700;letter-spacing:.18em;
+  text-transform:uppercase;color:rgba(8,145,178,.7);
+  margin-bottom:20px;position:relative;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.cta-tagline::before,.cta-tagline::after{content:'';display:block;width:20px;height:1px;background:rgba(8,145,178,.4);}
+.cta-h{font-size:clamp(26px,4vw,48px);font-weight:800;letter-spacing:-.04em;color:#f0f0ef;line-height:1.1;margin-bottom:14px;position:relative;}
+.cta-s{font-size:16px;color:rgba(255,255,255,.5);line-height:1.65;margin-bottom:36px;position:relative;}
+.btn-cta{
+  padding:0 32px;height:52px;font-size:13.5px;font-weight:600;
+  background:#fff;color:var(--teal);border:none;
+  border-radius:28px;cursor:pointer;font-family:var(--font);
+  display:inline-flex;align-items:center;gap:8px;
+  text-decoration:none;transition:all .2s;position:relative;
+  box-shadow:0 4px 24px rgba(0,0,0,.2);
+}
+.btn-cta:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.3);}
+.cta-note{font-size:12px;color:rgba(255,255,255,.3);margin-top:16px;position:relative;}
+
+/* ── FOOTER ── */
+footer{background:#0d1117;padding:40px max(28px,5vw) 32px;}
+.foot-inner{max-width:1020px;margin:0 auto;}
+.foot-brand{display:flex;align-items:center;gap:9px;text-decoration:none;margin-bottom:8px;}
+.foot-logo{width:28px;height:28px;border-radius:8px;background:linear-gradient(145deg,#0c6e82,#0891b2);display:flex;align-items:center;justify-content:center;}
+.foot-name{font-size:14px;font-weight:700;letter-spacing:-.02em;color:#f0f0ef;}
+.foot-tag{font-size:11.5px;color:rgba(255,255,255,.3);margin-left:37px;margin-bottom:28px;}
+.foot-bottom{border-top:1px solid rgba(255,255,255,.07);padding-top:22px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.foot-copy{font-size:12px;color:rgba(255,255,255,.25);}
+.foot-links{display:flex;gap:20px;}
+.foot-link{font-size:12px;color:rgba(255,255,
+
+
+
+
+/* 3D dashboard preview */
+
+.preview-browser:hover{
+  transform:perspective(1200px) rotateX(0deg) rotateY(0deg);
+}
+
+/* Scroll reveal */
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease;}
+.reveal.in{opacity:1;transform:none;}
+@media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none;}}
+@media(max-width:800px){
+  .feat-grid,.steps,.a-cards,.a-stats{grid-template-columns:1fr;}
+  .nav-links,.preview-section,.strip{display:none;}
+  .hero{padding-top:100px;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="topnav">
+  <a href="#" class="nav-brand">
+    <div class="nav-logomark">
+      <svg width="20" height="20" viewBox="0 0 44 44" fill="none">
+        <circle cx="22" cy="22" r="14" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" fill="none"/>
+        <ellipse cx="22" cy="22" rx="7" ry="14" stroke="rgba(255,255,255,0.35)" stroke-width="1.5" fill="none"/>
+        <line x1="8" y1="22" x2="36" y2="22" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+        <line x1="9.5" y1="15" x2="34.5" y2="15" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+        <line x1="9.5" y1="29" x2="34.5" y2="29" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+        <circle cx="22" cy="22" r="3" fill="white" opacity="0.9"/>
+      </svg>
+    </div>
+    <span class="nav-name">Atlas</span>
+  </a>
+  <div class="nav-links">
+    <a href="#features" class="nav-link" data-i18n="nav.features">Features</a>
+    <a href="#hoe-het-werkt" class="nav-link" data-i18n="nav.how">Hoe het werkt</a>
+    <a href="#pricing" class="nav-link" data-i18n="nav.pricing">Prijzen</a>
+  </div>
+  <div class="nav-actions">
+    <div class="lang-toggle">
+      <button class="lang-btn" data-lang="nl" onclick="atlasSetLang('nl')">NL</button>
+      <button class="lang-btn" data-lang="en" onclick="atlasSetLang('en')">EN</button>
+    </div>
+    <a href="app.html" class="btn-login" data-i18n="nav.login">Inloggen</a>
+    <a href="app.html" class="btn-start" data-i18n="nav.start">Gratis starten</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-ambient"></div>
+  <div class="hero-grid"></div>
+
+  <!-- BIG LOGO + SLOGAN -->
+  <div class="hero-logo-wrap">
+    <div class="hero-logomark">
+      <svg width="58" height="58" viewBox="0 0 44 44" fill="none">
+        <circle cx="22" cy="22" r="14" stroke="rgba(255,255,255,0.45)" stroke-width="1.8" fill="none"/>
+        <ellipse cx="22" cy="22" rx="7" ry="14" stroke="rgba(255,255,255,0.4)" stroke-width="1.8" fill="none"/>
+        <line x1="8" y1="22" x2="36" y2="22" stroke="rgba(255,255,255,0.35)" stroke-width="1.8"/>
+        <line x1="9.5" y1="15" x2="34.5" y2="15" stroke="rgba(255,255,255,0.22)" stroke-width="1.2"/>
+        <line x1="9.5" y1="29" x2="34.5" y2="29" stroke="rgba(255,255,255,0.22)" stroke-width="1.2"/>
+        <circle cx="22" cy="22" r="3.5" fill="white"/>
+      </svg>
+    </div>
+    <div class="hero-slogan" data-i18n="hero.slogan">Mapping your work</div>
+  </div>
+
+  <h1 class="hero-title">
+    <span class="hero-title-line1" data-i18n="hero.line1">Minder chaos.</span>
+    <span class="hero-title-line2" data-i18n="hero.line2">Meer overzicht.</span>
+    <span class="hero-title-line3" data-i18n="hero.line3">Altijd.</span>
+  </h1>
+  <p class="hero-sub" data-i18n="hero.sub">Het planning dashboard voor ondernemers en teams die overzicht willen houden zonder gedoe. Opdrachten, klanten, kalender en AI — op één plek.</p>
+  <div class="hero-cta">
+    <a href="app.html" class="btn-hero-main">
+      <span data-i18n="hero.cta.main">Gratis beginnen</span>
+      <i class="ti ti-arrow-right" style="font-size:15px"></i>
+    </a>
+    <a href="#hoe-het-werkt" class="btn-hero-sec">
+      <i class="ti ti-play" style="font-size:13px;color:var(--text3)"></i>
+      <span data-i18n="hero.cta.sec">Hoe het werkt</span>
+    </a>
+  </div>
+  <p class="hero-fine" data-i18n="hero.fine">Gratis · Geen creditcard · Real-time samenwerken</p>
+
+  <!-- DASHBOARD PREVIEW -->
+  <div class="preview-section">
+    <div class="preview-glow"></div>
+    <div class="preview-browser">
+      <div class="browser-bar">
+        <div class="b-dots">
+          <div class="b-dot" style="background:#ff5f57"></div>
+          <div class="b-dot" style="background:#ffbd2e"></div>
+          <div class="b-dot" style="background:#28c840"></div>
+        </div>
+        <div class="b-url">atlas.app/dashboard</div>
+      </div>
+      <div class="app-nav">
+        <div class="a-brand">
+          <div class="a-logomark">
+            <svg width="12" height="12" viewBox="0 0 44 44" fill="none">
+              <circle cx="22" cy="22" r="14" stroke="rgba(255,255,255,0.4)" stroke-width="2" fill="none"/>
+              <ellipse cx="22" cy="22" rx="7" ry="14" stroke="rgba(255,255,255,0.35)" stroke-width="2" fill="none"/>
+              <line x1="8" y1="22" x2="36" y2="22" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+              <circle cx="22" cy="22" r="3" fill="white"/>
+            </svg>
+          </div>
+          <span class="a-name">Atlas</span>
+        </div>
+        <div class="a-tab on"><i class="ti ti-layout-grid" style="font-size:11px"></i> Opdrachten <span class="a-tab-badge">7</span></div>
+        <div class="a-tab"><i class="ti ti-building" style="font-size:11px"></i> Klanten</div>
+        <div class="a-tab"><i class="ti ti-calendar" style="font-size:11px"></i> Kalender</div>
+        <div class="a-online"><div class="a-dot"></div> 3 online</div>
+      </div>
+      <div class="app-body">
+        <div class="a-date" data-i18n="prev.date">Maandag 8 juni</div>
+        <div class="a-title-row">
+          <div class="a-page-title" data-i18n="prev.title">Alle opdrachten</div>
+          <div class="a-btn" data-i18n="prev.btn">+ Nieuw</div>
+        </div>
+        <div class="a-summary">
+          <div class="a-sdot" style="background:#10b981"></div> <span data-i18n="prev.s1">Alles op schema</span>
+          <span style="color:var(--line2);margin:0 3px">·</span>
+          <div class="a-sdot" style="background:#f59e0b"></div> <span data-i18n="prev.s2">2 deadlines deze week</span>
+        </div>
+        <div class="a-stats">
+          <div class="a-stat" style="--c:#0c6e82"><div class="a-stat-l" data-i18n="stat.o.l">Open</div><div class="a-stat-v">3</div><div class="a-stat-h" data-i18n="stat.o.h">niet gestart</div></div>
+          <div class="a-stat" style="--c:#f59e0b"><div class="a-stat-l" data-i18n="stat.b.l">Bezig</div><div class="a-stat-v">4</div><div class="a-stat-h" data-i18n="stat.b.h">in uitvoering</div></div>
+          <div class="a-stat" style="--c:#8b5cf6"><div class="a-stat-l" data-i18n="stat.r.l">Review</div><div class="a-stat-v">2</div><div class="a-stat-h" data-i18n="stat.r.h">wacht op goedkeuring</div></div>
+          <div class="a-stat" style="--c:#10b981"><div class="a-stat-l" data-i18n="stat.k.l">Klaar</div><div class="a-stat-v">8</div><div class="a-stat-h" data-i18n="stat.k.h">gepubliceerd</div></div>
+        </div>
+        <div class="a-cards">
+          <div class="a-card">
+            <div class="a-client">Opdracht 1</div>
+            <div class="a-ctitle">Social campagne zomer</div>
+            <div class="a-badges">
+              <div class="a-badge" style="background:rgba(245,158,11,.1);color:#b45309" data-i18n="c1.s">Bezig</div>
+              <div class="a-badge" style="background:rgba(220,38,38,.08);color:#b91c1c" data-i18n="c1.p">Hoog</div>
+            </div>
+            <div class="a-prog"><div class="a-pfill" style="width:65%;background:#f59e0b"></div></div>
+            <div class="a-foot"><div class="a-av" style="background:#0c6e82">SZ</div><div class="a-chip">20 jun</div></div>
+          </div>
+          <div class="a-card">
+            <div class="a-client">Opdracht 2</div>
+            <div class="a-ctitle">Rebranding video edit</div>
+            <div class="a-badges">
+              <div class="a-badge" style="background:rgba(139,92,246,.1);color:#6d28d9" data-i18n="c2.s">Review</div>
+              <div class="a-badge" style="background:rgba(220,38,38,.08);color:#b91c1c" data-i18n="c2.p">Hoog</div>
+            </div>
+            <div class="a-prog"><div class="a-pfill" style="width:80%;background:#8b5cf6"></div></div>
+            <div class="a-foot"><div class="a-av" style="background:#0891b2">ML</div><div class="a-chip">12 jun</div></div>
+          </div>
+          <div class="a-card">
+            <div class="a-client">Opdracht 3</div>
+            <div class="a-ctitle">LinkedIn content strategie</div>
+            <div class="a-badges">
+              <div class="a-badge" style="background:rgba(12,110,130,.1);color:#0c6e82" data-i18n="c3.s">Open</div>
+              <div class="a-badge" style="background:rgba(217,119,6,.08);color:#b45309" data-i18n="c3.p">Middel</div>
+            </div>
+            <div class="a-prog"><div class="a-pfill" style="width:20%;background:#0c6e82"></div></div>
+            <div class="a-foot"><div class="a-av" style="background:#059669">RB</div><div class="a-chip">30 jun</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STRIP -->
+<div class="strip">
+  <div class="strip-item"><div class="strip-icon"><i class="ti ti-users"></i></div><span data-i18n="strip.rt">Real-time samenwerken</span></div>
+  <div class="strip-divider"></div>
+  <div class="strip-item"><div class="strip-icon"><i class="ti ti-building"></i></div><span data-i18n="strip.cl">Klantendossiers</span></div>
+  <div class="strip-divider"></div>
+  <div class="strip-item"><div class="strip-icon"><i class="ti ti-robot"></i></div><span data-i18n="strip.ai">AI-assistent</span></div>
+  <div class="strip-divider"></div>
+  <div class="strip-item"><div class="strip-icon"><i class="ti ti-calendar"></i></div><span data-i18n="strip.ca">Deadline kalender</span></div>
+  <div class="strip-divider"></div>
+  <div class="strip-item"><div class="strip-icon"><i class="ti ti-clock"></i></div><span data-i18n="strip.ti">Tijdregistratie</span></div>
+</div>
+
+<!-- FEATURES -->
+<section class="features reveal" id="features">
+  <div class="features-inner">
+    <div class="section-pre" data-i18n="feat.pre">Wat Atlas biedt</div>
+    <h2 class="section-h" data-i18n="feat.h">Gebouwd voor teams die écht werken</h2>
+    <p class="section-s" data-i18n="feat.s">Geen overbodige functies. Alleen wat je dagelijks nodig hebt om overzicht te houden.</p>
+    <div class="feat-grid">
+      <div class="feat"><div class="feat-ic"><i class="ti ti-layout-grid"></i></div><div class="feat-title" data-i18n="f1.t">Opdrachten & kanban</div><div class="feat-text" data-i18n="f1.d">Houd alles bij per klant. Schakel tussen kaartweergave en kanban. Prioriteiten, deadlines en voortgang in één oogopslag.</div></div>
+      <div class="feat"><div class="feat-ic"><i class="ti ti-users"></i></div><div class="feat-title" data-i18n="f2.t">Real-time samenwerken</div><div class="feat-text" data-i18n="f2.d">Teamleden zien wijzigingen direct. Wie er online is, wat er veranderd is — geen verwarring meer over wie wat doet.</div></div>
+      <div class="feat"><div class="feat-ic"><i class="ti ti-building"></i></div><div class="feat-title" data-i18n="f3.t">Klantendossiers</div><div class="feat-text" data-i18n="f3.d">Contactinfo, afspraken, do's en don'ts per klant. Nieuwe medewerkers lezen zich in een minuut in zonder jou lastig te vallen.</div></div>
+      <div class="feat"><div class="feat-ic"><i class="ti ti-robot"></i></div><div class="feat-title" data-i18n="f4.t">AI-assistent</div><div class="feat-text" data-i18n="f4.d">Vraag wat er urgent is, laat taken samenvatten of vraag om advies. De AI kent je opdrachten en klanten al.</div></div>
+      <div class="feat"><div class="feat-ic"><i class="ti ti-calendar"></i></div><div class="feat-title" data-i18n="f5.t">Deadline kalender</div><div class="feat-text" data-i18n="f5.d">Alle deadlines in één maandoverzicht. Klik op een dag om direct naar de opdracht te gaan. Nooit meer verrast worden.</div></div>
+      <div class="feat"><div class="feat-ic"><i class="ti ti-clock"></i></div><div class="feat-title" data-i18n="f6.t">Tijdregistratie</div><div class="feat-text" data-i18n="f6.d">Houdt bij hoeveel tijd je per opdracht besteedt. Ideaal om te zien wat klanten werkelijk kosten.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW -->
+<section class="how reveal" id="hoe-het-werkt">
+  <div class="how-inner">
+    <div class="how-pre" data-i18n="how.pre">In drie stappen</div>
+    <h2 class="how-h" data-i18n="how.h">Vandaag beginnen,<br>morgen overzicht</h2>
+    <div class="steps">
+      <div class="step"><div class="step-n">01</div><div class="step-ic"><i class="ti ti-building"></i></div><div class="step-title" data-i18n="s1.t">Maak een werkruimte</div><div class="step-text" data-i18n="s1.d">Registreer gratis en geef je werkruimte de naam van je team. In twee minuten klaar om te beginnen.</div></div>
+      <div class="step"><div class="step-n">02</div><div class="step-ic"><i class="ti ti-users"></i></div><div class="step-title" data-i18n="s2.t">Nodig je team uit</div><div class="step-text" data-i18n="s2.d">Deel de link. Teamleden registreren een eigen account en zien dezelfde werkruimte direct in real-time.</div></div>
+      <div class="step"><div class="step-n">03</div><div class="step-ic"><i class="ti ti-rocket"></i></div><div class="step-title" data-i18n="s3.t">Werk samen</div><div class="step-text" data-i18n="s3.d">Voeg opdrachten toe, wijs ze toe, houd voortgang bij. Atlas houdt bij wat er speelt zodat jij je hoofd leeg kunt houden.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing reveal" id="pricing">
+  <div class="pricing-inner">
+    <div class="section-pre" data-i18n="pr.pre">Prijzen</div>
+    <h2 class="section-h" style="font-size:clamp(26px,4vw,42px)" data-i18n="pr.h">Simpel en eerlijk</h2>
+    <div class="pricing-card">
+      <div class="price-amt"><span class="price-cur">€</span>0</div>
+      <div class="price-per" data-i18n="pr.per">Volledig gratis tijdens early access</div>
+      <ul class="price-list">
+        <li class="price-li"><i class="ti ti-check"></i> <span data-i18n="pr.l1">Onbeperkte opdrachten & werkruimtes</span></li>
+        <li class="price-li"><i class="ti ti-check"></i> <span data-i18n="pr.l2">Onbeperkte teamleden</span></li>
+        <li class="price-li"><i class="ti ti-check"></i> <span data-i18n="pr.l3">Klantendossiers</span></li>
+        <li class="price-li"><i class="ti ti-check"></i> <span data-i18n="pr.l4">Kalender & tijdregistratie</span></li>
+        <li class="price-li"><i class="ti ti-check"></i> <span data-i18n="pr.l5">Real-time samenwerken</span></li>
+        <li class="price-li"><i class="ti ti-check"></i> <span data-i18n="pr.l6">AI-assistent (eigen sleutel)</span></li>
+      </ul>
+      <a href="app.html" class="btn-price"><span data-i18n="pr.btn">Gratis beginnen</span> <i class="ti ti-arrow-right" style="font-size:14px"></i></a>
+      <p class="price-note" data-i18n="pr.note">Geen creditcard. Geen verborgen kosten.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta">
+  <div class="cta-box reveal">
+    <div class="cta-orb"></div>
+    <div class="cta-grid"></div>
+    <div class="cta-logo">
+      <svg width="40" height="40" viewBox="0 0 44 44" fill="none">
+        <circle cx="22" cy="22" r="14" stroke="rgba(255,255,255,0.45)" stroke-width="1.8" fill="none"/>
+        <ellipse cx="22" cy="22" rx="7" ry="14" stroke="rgba(255,255,255,0.4)" stroke-width="1.8" fill="none"/>
+        <line x1="8" y1="22" x2="36" y2="22" stroke="rgba(255,255,255,0.35)" stroke-width="1.8"/>
+        <line x1="9.5" y1="15" x2="34.5" y2="15" stroke="rgba(255,255,255,0.22)" stroke-width="1.2"/>
+        <line x1="9.5" y1="29" x2="34.5" y2="29" stroke="rgba(255,255,255,0.22)" stroke-width="1.2"/>
+        <circle cx="22" cy="22" r="3.5" fill="white"/>
+      </svg>
+    </div>
+    <div class="cta-tagline" data-i18n="hero.slogan">Mapping your work</div>
+    <h2 class="cta-h" data-i18n="cta.h">Klaar om de chaos<br>achter je te laten?</h2>
+    <p class="cta-s" data-i18n="cta.s">Maak een gratis werkruimte aan en heb binnen vijf minuten overzicht over al je opdrachten.</p>
+    <a href="app.html" class="btn-cta"><span data-i18n="cta.btn">Gratis account aanmaken</span> <i class="ti ti-arrow-right" style="font-size:15px"></i></a>
+    <p class="cta-note" data-i18n="cta.note">Gratis · Geen creditcard · Direct beginnen</p>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-inner">
+    <a href="#" class="foot-brand">
+      <div class="foot-logo">
+        <svg width="14" height="14" viewBox="0 0 44 44" fill="none">
+          <circle cx="22" cy="22" r="13" stroke="rgba(255,255,255,0.4)" stroke-width="1.8" fill="none"/>
+          <ellipse cx="22" cy="22" rx="6.5" ry="13" stroke="rgba(255,255,255,0.35)" stroke-width="1.8" fill="none"/>
+          <line x1="9" y1="22" x2="35" y2="22" stroke="rgba(255,255,255,0.3)" stroke-width="1.8"/>
+          <circle cx="22" cy="22" r="3" fill="white"/>
+        </svg>
+      </div>
+      <span class="foot-name">Atlas</span>
+    </a>
+    <div class="foot-tag" data-i18n="foot.tag">Mapping your work</div>
+    <div class="foot-bottom">
+      <div class="foot-copy" data-i18n="foot.copy">© 2026 Atlas. Gebouwd voor ondernemers en teams.</div>
+      <div class="foot-links">
+        <a href="app.html" class="foot-link" data-i18n="foot.login">Inloggen</a>
+        <a href="app.html" class="foot-link" data-i18n="foot.register">Registreren</a>
+        <a href="#features" class="foot-link" data-i18n="foot.features">Features</a>
+        <a href="privacy.html" class="foot-link" data-i18n="foot.privacy">Privacybeleid</a>
+        <a href="privacy.html#voorwaarden" class="foot-link" data-i18n="foot.terms">Voorwaarden</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="lang.js"></script>
+
+<script>
+const nav=document.getElementById('topnav');
+window.addEventListener('scroll',()=>{nav.classList.toggle('scrolled',window.scrollY>20);},{passive:true});
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    const h=a.getAttribute('href');
+    if(h==='#')return;
+    e.preventDefault();
+    const el=document.querySelector(h);
+    if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
+  });
+});
+// Scroll reveal
+const io=new IntersectionObserver((entries)=>{
+  entries.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target);}});
+},{threshold:0.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
